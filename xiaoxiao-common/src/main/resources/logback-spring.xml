@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="false" debug="false">
+    <contextName>nacos</contextName>
+
+    <!--应用名称-->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="xiaoxiao-app"/>
+    <springProperty scope="context" name="LOKI_URL" source="loki.url"/>
+
+    <!--控制台日志输出-->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出（配色）：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%yellow(%d{yyyy-MM-dd HH:mm:ss}) %red([%thread]) %highlight(%-5level) %cyan(%logger{50}) - %magenta(%msg) %n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--输出到loki-->
+    <appender name="loki" class="com.github.loki4j.logback.Loki4jAppender">
+        <http class="com.github.loki4j.logback.ApacheHttpSender">
+            <url>${LOKI_URL}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>service=${APP_NAME},host=${HOSTNAME},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>%red([%thread]) %highlight(%-5level) %cyan(%logger{50}) - %magenta(%msg) %n</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
+
+    <!--针对dev环境下的日志配置-->
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="consoleLog"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="info">
+            <appender-ref ref="consoleLog"/>
+            <appender-ref ref="loki"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prd">
+        <root level="info">
+            <appender-ref ref="loki"/>
+        </root>
+    </springProfile>
+
+
+</configuration>

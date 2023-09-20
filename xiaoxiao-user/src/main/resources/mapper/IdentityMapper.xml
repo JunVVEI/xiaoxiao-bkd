@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoxiao.user.mapper.IdentityMapper">
+
+    <select id="searchIdentityByKeyword" resultType="com.xiaoxiao.user.rpc.model.vo.RpcFollowUserVO">
+        SELECT
+        id AS identity_id,
+        name As identity_name,
+        avatar AS identity_avatar
+        FROM
+        ums_identity
+        <where>
+            <if test="keyword != null and keyword != ''">
+                MATCH(name) AGAINST(#{keyword})
+            </if>
+            AND is_delete = 0
+        </where>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoxiao.baseservice.mapper.MailLogMapper">
+
+   <resultMap type="com.xiaoxiao.baseservice.model.entity.MailLog" id="MailLogMap">
+           <result property="id" column="id"/>
+           <result property="targetAddress" column="target_address"/>
+           <result property="sendContent" column="send_content"/>
+           <result property="sendReason" column="send_reason"/>
+           <result property="sendTime" column="send_time"/>
+           <result property="sendResult" column="send_result"/>
+   </resultMap>
+
+
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="Long">
+            delete from base_mail_log
+              where id =#{id}
+    </delete>
+
+
+    <!--新增邮箱日志-->
+    <insert id="add" parameterType="com.xiaoxiao.baseservice.model.entity.MailLog">
+        INSERT INTO base_mail_log
+            VALUE (#{id},#{targetAddress},#{sendContent},#{sendReason},#{sendTime},#{sendResult})
+    </insert>
+
+
+    <!--更新邮箱日志-->
+    <update id="update" parameterType="com.xiaoxiao.baseservice.model.entity.MailLog">
+        UPDATE base_mail_log
+        <set>
+            <if test="targetAddress!=null and targetAddress!=''">
+                target_address=#{targetAddress},
+            </if>
+            <if test="sendContent!=null and sendContent!=''">
+                send_content=#{sendContent},
+            </if>
+            <if test="sendTime!=null">
+                send_time=#{sendTime},
+            </if>
+            <if test="sendResult!=null">
+                send_result=#{sendResult}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+
+
+</mapper>

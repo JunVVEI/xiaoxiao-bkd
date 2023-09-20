@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoxiao.bbs.mapper.ActivityCommentMapper">
+
+    <resultMap type="com.xiaoxiao.bbs.model.entity.ActivityComment" id="ActivityCommentMap">
+        <result property="id" column="id"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="userId" column="user_Id"/>
+        <result property="identityId" column="identity_id"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="content" column="content"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="mediaPath" column="media_path"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+
+
+    <!--传入userId，判断是否点赞，返回ActCommentVO-->
+    <select id="selectCommentsLikedByUser" resultType="com.xiaoxiao.bbs.model.vo.ActCommentVO">
+        SELECT ac.*, COALESCE(acl.user_id, false) AS is_like
+        FROM activity_comment ac
+                 LEFT JOIN activity_comment_like acl ON ac.id = acl.comment_id AND acl.user_id = #{actCommentQuery.userId}
+            AND acl.status = 1
+        WHERE ac.activity_id = #{actCommentQuery.activityId} AND ac.is_delete = false
+        <if test="actCommentQuery.order == 1">
+            ORDER BY ac.like_count DESC
+        </if>
+        <if test="actCommentQuery.order == 2">
+            ORDER BY ac.create_time DESC
+        </if>
+
+
+    </select>
+
+    <!--判断评论是否存在-->
+    <select id="checkCommentExist" resultType="boolean">
+        <![CDATA[
+        select count(id)
+        from activity_comment
+        where id = #{id}
+        ]]>
+    </select>
+
+    <!--点赞数加1-->
+    <update id="plusLike">
+        UPDATE activity_comment
+        SET like_count = like_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <!--点赞数减1-->
+    <update id="minusLike">
+        UPDATE activity_comment
+        SET like_count = like_count - 1
+        WHERE id = #{id}
+    </update>
+
+
+    <!--删除子评论-->
+    <update id="deleteSubComment">
+        UPDATE activity_sub_comment
+        SET is_delete = true
+        WHERE comment_id = #{id};
+
+    </update>
+
+    <!--增加点赞记录-->
+    <insert id="addLike">
+        insert into activity_comment_like(user_id, comment_id, status)
+            value
+            (#{userId},#{commentId},#{status})
+
+    </insert>
+
+    <!--删除点赞记录-->
+    <delete id="deleteLike">
+        delete from activity_comment_like
+        <where>
+                <if test="userId!=null">
+                    and user_id =#{userId}
+                </if>
+            and comment_id =#{commentId}
+            and status =#{status}
+        </where>
+    </delete>
+
+    <!--查点赞表，判断是否点赞-->
+    <select id="findLike" resultType="boolean">
+        SELECT COUNT(id)
+        FROM activity_comment_like
+        WHERE
+        <if test="userId !=null">
+            user_id = #{userId}
+        </if>
+        AND comment_id = #{commentId}
+        AND status = 1
+    </select>
+
+</mapper>

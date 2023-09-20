@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoxiao.bbs.mapper.PostMapper">
+
+    <update id="updateViewCount">
+        UPDATE bbs_post
+        SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+    <update id="plusShareCount">
+        UPDATE bbs_post
+        SET share_count = share_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="queryPostListByKeyword" resultType="com.xiaoxiao.bbs.model.vo.PostVO">
+        SELECT p.id,
+        p.user_id,
+        p.identity_id,
+        p.title,
+        p.content,
+        p.creator_name,
+        p.create_time,
+        p.`status`,
+        p.share_count,
+        p.like_count,
+        p.comment_count,
+        p.view_count,
+        p.is_delete,
+        p.media_path,
+        p.tag_id,
+        IFNULL(l.flag, false) as is_like
+        FROM bbs_post p
+        LEFT JOIN bbs_like l
+        ON p.id = l.content_id
+        AND l.uid = #{userId}
+        AND l.flag = 1
+        AND l.type = 100
+        <where>
+            <if test="keyword != null and keyword != ''">
+                MATCH(title, content) AGAINST(#{keyword})
+            </if>
+            AND p.is_delete = 0
+        </where>
+        ORDER BY p.create_time DESC
+    </select>
+
+</mapper>

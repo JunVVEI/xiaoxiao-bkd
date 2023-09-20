@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoxiao.toolbag.mapper.FreeRoomMapper">
+    <insert id="insertMany" keyProperty="id" useGeneratedKeys="true">
+        insert into free_room(week, day, building_id, course_time, classroom, seat_number, exam_seat_number)
+        values
+        <foreach collection="list" separator="," item="item">
+            (#{item.week}, #{item.day}, #{item.buildingId}, #{item.courseTime}, #{item.classroom}, #{item.seatNumber}, #{item.examSeatNumber})
+        </foreach>
+    </insert>
+</mapper>

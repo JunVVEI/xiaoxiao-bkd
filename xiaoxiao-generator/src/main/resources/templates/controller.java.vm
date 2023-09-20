@@ -1,0 +1,72 @@
+package ${package.Controller};
+
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${table.entityName};
+import com.xiaoxiao.common.api.CommonPage;
+import com.xiaoxiao.common.api.CommonResp;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.Resource;
+import java.util.HashMap;
+
+#if(${restControllerStyle})
+import org.springframework.web.bind.annotation.RestController;
+#else
+import org.springframework.stereotype.Controller;
+#end
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+    #if(${superControllerClass})
+    public class ${table.controllerName} extends ${superControllerClass} {
+    #else
+    public class ${table.controllerName} {
+    #end
+@Resource
+private ${table.serviceName} ${table.entityPath}Service;
+
+@PostMapping("queries")
+public  CommonResp query(@RequestBody HashMap<String, Object> m){
+       return null;
+        }
+
+@GetMapping("{id}")
+public  CommonResp queryById(@PathVariable("id") Integer id){
+        return CommonResp.success(${table.entityPath}Service.getById(id));
+        }
+
+@PostMapping
+public  CommonResp add(@RequestBody ${entity} ${table.entityPath}){
+        return CommonResp.success(${table.entityPath}Service.save(${table.entityPath}));
+        }
+
+@PutMapping
+public  CommonResp edit(@RequestBody ${entity} ${table.entityPath}){
+        return CommonResp.success(${table.entityPath}Service.updateById(${table.entityPath}));
+        }
+
+@DeleteMapping("{id}")
+public  CommonResp deleteById(@PathVariable Integer id){
+        return CommonResp.success(${table.entityPath}Service.removeById(id));
+        }
+        }
+
+#end
