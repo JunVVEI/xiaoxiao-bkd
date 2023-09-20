@@ -15,10 +15,11 @@
 </p>
 
 ### 上手指南
+**!! 由于精力原因，此部分尚未做到面面俱到，过程中可能遇到一些问题，请先自行尝试解决**
 
 * 拉取代码
 * 将项目添加为maven项目并导入依赖
-* 安装Nacos(2.1.1)，配置MySQL为数据源Nacos的持久化方式，其中[nacos.sql](docs%2Fnacos%2Fnacos.sql) 为相关表结构的创建语句
+* 安装Nacos(2.1.1)，配置MySQL为Nacos的持久化方式，其中[nacos.sql](docs%2Fnacos%2Fnacos.sql) 为相关表结构的创建语句
 * 打开nacos管理页面，新建一个命名空间，名称为**dev**，将配置[nacos_config.zip](docs%2Fnacos%2Fnacos_config.zip)导入到**dev**命名空间中
 * 安装MySQL(5.7.18)、Redis(6.2.6)，括号内为推荐版本
 * 根据[xiaoxiao.sql](docs%2Fsql%2Fxiaoxiao.sql)创建项目业务相关的表
